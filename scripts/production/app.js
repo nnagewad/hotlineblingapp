@@ -1,42 +1,7 @@
 var hotlineBlingApp = {};
 
-// Function to obtain images from UnSplash's website
-// hotlineBlingApp.obtainImage = function() {
-// 	var apiEndpoint = 'https://api.unsplash.com/photos/';
-// 	// query strings
-// 	// header
-// 	var acceptVersion = 'v1';
-// 	// parameters
-// 	var clientID = '3340e74b359dee24ab6d22a1f0cf6369ec40f0d597baec1f6348ee3b5f4b1f45';
-// 	// random page selector
-// 	var randomPage = Math.floor((Math.random() * 50) + 1);
-// 	console.log(randomPage);
-// 	var imagePerPage = 10;
-// 	// making ajax call
-// 	$.ajax({
-// 		url: apiEndpoint+'?page='+randomPage+'&per_page='+imagePerPage+'&client_id='+clientID,
-// 		type: 'get',
-// 		dataType: 'json',
-// 		success: function(data) {
-// 			// Console Log the return array
-// 			console.log(data);
-// 			// Select a random image from the array
-// 			var randomPhoto = data[Math.random() * data.length | 0];
-// 			// Create an element
-// 			var image = document.createElement('img');
-// 			// Set attributes to the newly created Element
-// 			image.crossOrigin = "Anonymous";
-// 			image.src = 'http://crossorigin.me/'+randomPhoto.urls.thumb;
-// 			image.id = "photo";
-// 			// Append image onto page in order to convert to canvas
-// 			$('#photoID').append(image);
-// 		},
-// 		error: function(data) {
-// 			console.log(data);
-// 		}
-// 	});
-// }
 
+// Obtain image according to a specific tag
 hotlineBlingApp.obtainInstagram = function() {
 	var apiEndpoint = 'https://api.instagram.com/v1/';
 	var tag = 'pantone'
@@ -72,28 +37,6 @@ hotlineBlingApp.obtainInstagram = function() {
 		}
 	});
 }
-
-// Function to get Color Palette by using ColorTheif on images from UnSplash
-// hotlineBlingApp.obtainColorPalette = function() {
-// 	var sourceImage = document.getElementById('photo');
-// 	var colorThief = new ColorThief();
-// 	var colors = colorThief.getPalette(sourceImage);
-	
-// 	// Loop through to obtain the different colour palette.
-// 	for (i = 0; i < colors.length; i++) {
-
-// 		var newDiv = document.createElement('div');
-// 		newDiv.className= 'color';
-// 		$('#colors').append(newDiv);
-
-// 		// Print colors in the console.
-// 		var rgbColor = 'rgb('+colors[i]+')';
-// 		console.log(rgbColor);
-
-// 		// Print colors on the screen
-// 		$('#colors').children().eq(i).css('background', rgbColor);
-// 	}
-// }
 
 
 // A function to enchance the colors of the light
@@ -133,11 +76,70 @@ hotlineBlingApp.RGBtoXY = function(r, g, b) {
 };
 
 
+// Function in control of the Philips Hue Lights
+var lightsEndpoint = 'http://192.168.0.39/api/';
+var hueId = '341f606a74cc8af9473089711f7576a';
+var allLights = 'groups/1/action';
+var light1 = 'lights/1/state';
+var light2 = 'lights/2/state';
+var light3 = 'lights/3/state';
+
+hotlineBlingApp.philipHueLightsInfo = function() {
+	$.ajax({
+		url: lightsEndpoint+hueId+'/config',
+		type: 'get',
+		dataType: 'json',
+		success: function(data) {
+			console.log(data);
+		},
+		error: function(data) {
+			console.log(data);
+		}
+	});
+}
+
+
+// Turn lights On
+hotlineBlingApp.philipHueLightsOn = function() {
+	var lightsOn = {"on": true };
+	$.ajax({
+		url: lightsEndpoint+hueId+'/'+allLights,
+		type: 'put',
+		dataType: 'json',
+		data: JSON.stringify(lightsOn),
+		success: function(data) {
+			console.log(data);
+		},
+		error: function(data) {
+			alert('Lost Connection with Philips Hue');
+		}
+	});
+}
+
+
+// Turn lights Off
+hotlineBlingApp.philipHueLightsOff = function() {
+	var lightsOff = {"on": false };
+	$.ajax({
+		url: lightsEndpoint+hueId+'/'+allLights,
+		type: 'put',
+		dataType: 'json',
+		data: JSON.stringify(lightsOff),
+		success: function(data) {
+			console.log(data);
+		},
+		error: function(data) {
+			alert('Lost Connection with Philips Hue');
+		}
+	});
+}
+
+
 //Function to emit color to the bulb
 hotlineBlingApp.philipHueLightsColor = function() {
 	var colorTest = {"xy": [xFinal,yFinal]};
 	$.ajax({
-		url: lightsEndpoint+hueId+'/'+light3+'/state',
+		url: lightsEndpoint+hueId+'/'+allLights,
 		type: 'put',
 		dataType: 'json',
 		data: JSON.stringify(colorTest),
@@ -145,7 +147,7 @@ hotlineBlingApp.philipHueLightsColor = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			alert('nope');
+			alert('Lost Connection with Philips Hue');
 		}
 	});
 }
@@ -173,10 +175,8 @@ hotlineBlingApp.obtainDominantColor = function() {
 hotlineBlingApp.grabImageAndColor = function() {
 	$('#photoID').empty();
 	// Obtain the image and run colour theif after one second of obtaining image
-	// hotlineBlingApp.obtainImage();
 	hotlineBlingApp.obtainInstagram();
 	setTimeout(function(){
-		// hotlineBlingApp.obtainColorPalette();
 		hotlineBlingApp.obtainDominantColor();
 	}, 1000);
 }
@@ -198,59 +198,41 @@ hotlineBlingApp.loop = function() {
 }
 
 
-// Function in control of the Philips Hue Lights
-var lightsEndpoint = 'http://192.168.0.39/api/';
-var hueId = '341f606a74cc8af9473089711f7576a';
-var light1 = 'lights/1';
-var light2 = 'lights/2';
-var light3 = 'lights/3';
-
-hotlineBlingApp.philipHueLightsInfo = function() {
-	$.ajax({
-		url: lightsEndpoint+hueId+'/config',
-		type: 'get',
-		dataType: 'json',
-		success: function(data) {
-			console.log(data);
-		},
-		error: function(data) {
-			console.log(data);
+// Konami code taken from: https://css-tricks.com/snippets/jquery/konomi-code/ 
+// Konami code to play Drake's Hotline Bling.
+// Simply type "d-r-a-k-e" to play the song
+hotlineBlingApp.audio = function () {
+	var kkeys = [];
+	var drake = '68,82,65,75,69';  // Keys that spell d-r-a-k-e
+	var audio = new Audio('audio/hotlineBling.mp3');
+	$(document).keydown(function(e) {
+		kkeys.push( e.keyCode );
+		if ( kkeys.toString().indexOf( drake ) >= 0 ) {
+			$(document).unbind('keydown',arguments.callee);
+			audio.play();
+			$('.controls').append("<button class='pause'>Pause</button>").append("<button class='play'>Play</button>");
 		}
 	});
-}
-
-// Turn lights On
-hotlineBlingApp.philipHueLightsOn = function() {
-	var lightsOn = {"on": true };
-	$.ajax({
-		url: lightsEndpoint+hueId+'/'+light3+'/state',
-		type: 'put',
-		dataType: 'json',
-		data: JSON.stringify(lightsOn),
-		success: function(data) {
-			console.log(data);
-		},
-		error: function(data) {
-			alert('nope');
-		}
+	// To pause the audio
+	$('.controls').on('click', '.pause', function() {
+		audio.pause();
+		$('.pause').hide();
+		$('.play').show();
+	});
+	// To play the audio after being paused
+	$('.controls').on('click', '.play', function() {
+		audio.play();
+		$('.play').hide();
+		$('.pause').show();
 	});
 }
 
 
-// Turn lights Off
-hotlineBlingApp.philipHueLightsOff = function() {
-	var lightsOff = {"on": false };
-	$.ajax({
-		url: lightsEndpoint+hueId+'/'+light3+'/state',
-		type: 'put',
-		dataType: 'json',
-		data: JSON.stringify(lightsOff),
-		success: function(data) {
-			console.log(data);
-		},
-		error: function(data) {
-			alert('nope');
-		}
-	});
+hotlineBlingApp.init = function() {
+	hotlineBlingApp.audio();
 }
 
+
+$(function() {
+	hotlineBlingApp.init();
+});
