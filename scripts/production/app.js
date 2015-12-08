@@ -16,15 +16,15 @@ hotlineBlingApp.obtainInstagram = function() {
 		success: function(instagram) {
 			// Console Log the return array
 			var randomPhoto = Math.floor(Math.random() * 20);
-			console.log(randomPhoto);
-			console.log(instagram);
+			// console.log(randomPhoto);
+			// console.log(instagram);
 			var instagramData = instagram.data[randomPhoto];
 			var link = instagramData.link;
 			var instagramDataImages = instagramData.images;
 			var thumbnailImage = instagramDataImages.thumbnail.url;
 			var lowResolution = instagramDataImages.low_resolution.url;
 			var standardResolution = instagramDataImages.standard_resolution.url;
-			console.log('link: '+link);
+			// console.log('link: '+link);
 
 
 			// Create an element
@@ -81,7 +81,7 @@ hotlineBlingApp.RGBtoXY = function(r, g, b) {
 
 
 // Function in control of the Philips Hue Lights
-var lightsEndpoint = 'http://192.168.0.39/api/';
+var lightsEndpoint = 'http://192.168.2.247/api/';
 var hueId = '341f606a74cc8af9473089711f7576a';
 var allLights = 'groups/1/action';
 var light1 = 'lights/1/state';
@@ -115,7 +115,7 @@ hotlineBlingApp.philipHueLightsOn = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			alert('Lost Connection with Philips Hue');
+			console.log('Lost Connection with Philips Hue');
 		}
 	});
 }
@@ -133,7 +133,7 @@ hotlineBlingApp.philipHueLightsOff = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			alert('Lost Connection with Philips Hue');
+			console.log('Lost Connection with Philips Hue');
 		}
 	});
 }
@@ -151,7 +151,7 @@ hotlineBlingApp.philipHueLightsColor = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			alert('Lost Connection with Philips Hue');
+			console.log('Lost Connection with Philips Hue');
 		}
 	});
 }
@@ -166,9 +166,9 @@ hotlineBlingApp.obtainDominantColor = function() {
 	var r = colors[0];
 	var g = colors[1];
 	var b = colors[2];
-	console.log('r: '+r);
-	console.log('g: '+g);
-	console.log('b: '+b);
+	// console.log('r: '+r);
+	// console.log('g: '+g);
+	// console.log('b: '+b);
 	$('#colors').css('background', rgbColor);
 	hotlineBlingApp.RGBtoXY(r, g, b);
 	hotlineBlingApp.philipHueLightsColor();
