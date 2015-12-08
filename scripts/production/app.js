@@ -18,8 +18,12 @@ hotlineBlingApp.obtainInstagram = function() {
 			var randomPhoto = Math.floor(Math.random() * 20);
 			console.log(randomPhoto);
 			console.log(instagram);
-			var link = instagram.data[randomPhoto].link;
-			var thumbnailImage = instagram.data[randomPhoto].images.thumbnail.url;
+			var instagramData = instagram.data[randomPhoto];
+			var link = instagramData.link;
+			var instagramDataImages = instagramData.images;
+			var thumbnailImage = instagramDataImages.thumbnail.url;
+			var lowResolution = instagramDataImages.low_resolution.url;
+			var standardResolution = instagramDataImages.standard_resolution.url;
 			console.log('link: '+link);
 
 
@@ -27,7 +31,7 @@ hotlineBlingApp.obtainInstagram = function() {
 			var image = document.createElement('img');
 			// Set attributes to the newly created Element
 			image.crossOrigin = "Anonymous";
-			image.src = 'http://crossorigin.me/'+thumbnailImage;
+			image.src = 'http://crossorigin.me/'+lowResolution;
 			image.id = "photo";
 			// Append image onto page in order to convert to canvas
 			$('#photoID').append(image);
@@ -210,14 +214,14 @@ hotlineBlingApp.audio = function () {
 		if ( kkeys.toString().indexOf( drake ) >= 0 ) {
 			$(document).unbind('keydown',arguments.callee);
 			audio.play();
-			$('.controls').append("<button class='pause'>Pause</button>").append("<button class='play'>Play</button>");
+			$('.controls').append("<button class='pause'><i class='fa fa-pause'></i></button>").append("<button class='play'><i class='fa fa-play'></i></button>");
 		}
 	});
 	// To pause the audio
 	$('.controls').on('click', '.pause', function() {
 		audio.pause();
 		$('.pause').hide();
-		$('.play').show();
+		$('.play').css('display','block');
 	});
 	// To play the audio after being paused
 	$('.controls').on('click', '.play', function() {
@@ -230,6 +234,10 @@ hotlineBlingApp.audio = function () {
 
 hotlineBlingApp.init = function() {
 	hotlineBlingApp.audio();
+	$('.yolo').on('click', function() {
+		hotlineBlingApp.loop();
+		$(this).hide();
+	});
 }
 
 

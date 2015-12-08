@@ -1,5 +1,5 @@
 * {
-	transition: background-color 0.5s ease;
+	transition: all 0.5s ease;
 }
 
 body {
@@ -10,11 +10,51 @@ body {
 .main-title {
 	text-align: center;
 	text-transform: uppercase;
+	font-style: italic;
+	font-size: 54px;
 }
 
 .container {
 	max-width: 1000px;
 	margin: 0 auto;
+}
+
+#photoID {
+	height: 320px;
+}
+
+#photo {
+	margin: 0 auto;
+	display: block;
+	border-radius: 50%;
+}
+
+.controls {
+	margin-top: 50px;
+}
+
+button.yolo {
+	font-style: italic;
+}
+
+.yolo,
+.play,
+.pause {
+	margin: 0 auto;
+	display: block;
+	background: transparent;
+	border: 4px solid white;
+	border-radius: 4px;
+	font-size: 20px;
+	color: white;
+	font-style: bold;
+	font-size: 36px;
+	width: 25%;
+	padding: 20px;
+	&:hover {
+		background: white;
+		color: #fdadc6;
+	}
 }
 
 .play {
