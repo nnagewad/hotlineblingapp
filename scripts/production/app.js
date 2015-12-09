@@ -4,14 +4,14 @@ var hotlineBlingApp = {};
 // Obtain image according to a specific tag
 hotlineBlingApp.obtainInstagram = function() {
 	var apiEndpoint = 'https://api.instagram.com/v1/';
-	var tag = 'pantone'
+	var tag = 'hotlineblingapp'
 	// query strings
 	// parameters
 	var clientID = '64809.ead51d4.6efb12510be948588f940f5b3333b7ee';
 	// making ajax call
 	$.ajax({
 		url: apiEndpoint+'tags/'+tag+'/media/recent/?access_token='+clientID,
-		type: 'get',
+		type: 'GET',
 		dataType: 'jsonp',
 		success: function(instagram) {
 			// Console Log the return array
@@ -24,9 +24,6 @@ hotlineBlingApp.obtainInstagram = function() {
 			var thumbnailImage = instagramDataImages.thumbnail.url;
 			var lowResolution = instagramDataImages.low_resolution.url;
 			var standardResolution = instagramDataImages.standard_resolution.url;
-			// console.log('link: '+link);
-
-
 			// Create an element
 			var image = document.createElement('img');
 			// Set attributes to the newly created Element
@@ -81,7 +78,8 @@ hotlineBlingApp.RGBtoXY = function(r, g, b) {
 
 
 // Function in control of the Philips Hue Lights
-var lightsEndpoint = 'http://192.168.2.247/api/';
+// var lightsEndpoint = 'http://192.168.2.247/api/'; //HackerYou
+var lightsEndpoint = 'http://192.168.0.39/api/'; //Test
 var hueId = '341f606a74cc8af9473089711f7576a';
 var allLights = 'groups/1/action';
 var light1 = 'lights/1/state';
@@ -97,7 +95,7 @@ hotlineBlingApp.philipHueLightsInfo = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			console.log(data);
+			$('.instagram').show();
 		}
 	});
 }
@@ -115,7 +113,7 @@ hotlineBlingApp.philipHueLightsOn = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			console.log('Lost Connection with Philips Hue');
+			$('.philips-hue').show();
 		}
 	});
 }
@@ -133,7 +131,7 @@ hotlineBlingApp.philipHueLightsOff = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			console.log('Lost Connection with Philips Hue');
+			$('.philips-hue').show();
 		}
 	});
 }
@@ -151,7 +149,7 @@ hotlineBlingApp.philipHueLightsColor = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			console.log('Lost Connection with Philips Hue');
+			$('.philips-hue').show();
 		}
 	});
 }
@@ -188,7 +186,7 @@ hotlineBlingApp.grabImageAndColor = function() {
 
 // Loop through to obtain images and it's color value automatically
 hotlineBlingApp.loop = function() {
-	var loop = 100;
+	var loop = 1000;
 	var lightDuration = 5000;
 	hotlineBlingApp.philipHueLightsOn();
 	for (i=0; i < loop; i++) {
@@ -214,30 +212,48 @@ hotlineBlingApp.audio = function () {
 		if ( kkeys.toString().indexOf( drake ) >= 0 ) {
 			$(document).unbind('keydown',arguments.callee);
 			audio.play();
-			$('.controls').append("<button class='pause'><i class='fa fa-pause'></i></button>").append("<button class='play'><i class='fa fa-play'></i></button>");
+			$('.pause').show();
 		}
 	});
 	// To pause the audio
-	$('.controls').on('click', '.pause', function() {
+	$('.pause').on('click', function() {
 		audio.pause();
-		$('.pause').hide();
-		$('.play').css('display','block');
+		$(this).hide();
+		$('.play').show();
 	});
 	// To play the audio after being paused
-	$('.controls').on('click', '.play', function() {
+	$('.play').on('click', function() {
 		audio.play();
-		$('.play').hide();
+		$(this).hide();
 		$('.pause').show();
+	});
+}
+
+
+// Yolo Button
+hotlineBlingApp.yoloButton = function() {
+	$('.yolo').on('click', function() {
+		hotlineBlingApp.loop();
+		$(this).hide();
+		$('.off').show();
+	});
+}
+
+
+// Off button
+hotlineBlingApp.offButton = function() {
+	$('.off').on('click', function() {
+		hotlineBlingApp.philipHueLightsOff();
+		$(this).hide();
+		$('.yolo').show();
 	});
 }
 
 
 hotlineBlingApp.init = function() {
 	hotlineBlingApp.audio();
-	$('.yolo').on('click', function() {
-		hotlineBlingApp.loop();
-		$(this).hide();
-	});
+	hotlineBlingApp.yoloButton();
+	hotlineBlingApp.offButton();
 }
 
 

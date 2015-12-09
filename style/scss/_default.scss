@@ -1,8 +1,16 @@
+html {
+	font-size: 62.5%;
+	@media #{$small-mobile} {
+		font-size: 50%;
+	}
+}
+
 * {
 	transition: all 0.5s ease;
 }
 
 body {
+	font-family: Roboto;
 	color: white;
 	background: #fdadc6;
 }
@@ -11,7 +19,9 @@ body {
 	text-align: center;
 	text-transform: uppercase;
 	font-style: italic;
-	font-size: 54px;
+	font-weight: 700;
+	@include font-size(5.4);
+
 }
 
 .container {
@@ -29,35 +39,42 @@ body {
 	border-radius: 50%;
 }
 
-.controls {
-	margin-top: 50px;
+.message {
+	text-align: center;
+	@include font-size(2);
 }
 
-button.yolo {
-	font-style: italic;
-	margin-bottom: 20px;
+.controls {
+	margin-top: 50px;
+	text-align: center;
 }
 
 .yolo,
 .play,
-.pause {
-	margin: 0 auto;
+.pause,
+.off {
+	font-weight: 500;
+	margin: 0 auto 20px;
 	display: block;
 	background: transparent;
-	border: 4px solid white;
+	border: 8px solid white;
 	border-radius: 4px;
-	font-size: 20px;
 	color: white;
 	font-style: bold;
-	font-size: 36px;
-	width: 25%;
+	text-transform: uppercase;
+	@include font-size(3.6);
 	padding: 20px;
+	text-align: center;
 	&:hover {
 		background: white;
 		color: #fdadc6;
 	}
 }
 
-.play {
+.pause,
+.play,
+.off,
+.instagram,
+.philips-hue {
 	display: none;
 }
