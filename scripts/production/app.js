@@ -7,6 +7,7 @@ var $pause = $('.pause');
 var $play = $('.play');
 var $yolo = $('.yolo');
 var $off = $('.off');
+var loop;
 
 // Obtain image according to a specific tag
 hotlineBlingApp.obtainInstagram = function() {
@@ -196,19 +197,13 @@ hotlineBlingApp.grabImageAndColor = function() {
 }
 
 
-// Loop through to obtain images and it's color value automatically
-hotlineBlingApp.loop = function() {
-	var loop = 5;
-	var lightDuration = 5000;
+hotlineBlingApp.interval = function() {
 	hotlineBlingApp.philipHueLightsOn();
-	for (i=0; i < loop; i++) {
-		(function(ind) {
-			setTimeout(function(){
-				$photoID.empty();
-				hotlineBlingApp.grabImageAndColor();
-			}, 500 + (lightDuration * ind));
-		})(i);
-	}
+	loop = setInterval(function() {
+		console.log(loop);
+		$photoID.empty();
+		hotlineBlingApp.grabImageAndColor();
+	}, 5000);
 }
 
 
@@ -245,7 +240,7 @@ hotlineBlingApp.audio = function () {
 // Yolo Button
 hotlineBlingApp.yoloButton = function() {
 	$yolo.on('click', function() {
-		hotlineBlingApp.loop();
+		hotlineBlingApp.interval();
 		$(this).hide();
 		$off.show();
 	});
@@ -255,6 +250,7 @@ hotlineBlingApp.yoloButton = function() {
 // Off button
 hotlineBlingApp.offButton = function() {
 	$off.on('click', function() {
+		clearInterval(loop);
 		hotlineBlingApp.philipHueLightsOff();
 		$(this).hide();
 		$yolo.show();
