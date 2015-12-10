@@ -3,6 +3,7 @@ var $photoID = $('#photoID');
 var $philipsHue = $('.philips-hue');
 var $colors = $('#colors');
 var $body = $('body');
+var $owl = $('.owl');
 var $button = $('button');
 var $pause = $('.pause');
 var $play = $('.play');
@@ -198,10 +199,12 @@ hotlineBlingApp.grabImageAndColor = function() {
 }
 
 
+// Grab images from Instagram every 5 seconds
 hotlineBlingApp.interval = function() {
 	loop = setInterval(function() {
 		$body.addClass('lights-on');
 		$button.addClass('lights-on-button');
+		hotlineBlingApp.philipHueLightsOn();
 		$photoID.empty();
 		hotlineBlingApp.grabImageAndColor();
 	}, 5000);
@@ -220,9 +223,10 @@ hotlineBlingApp.audio = function () {
 		if ( kkeys.toString().indexOf( drake ) >= 0 ) {
 			$(document).unbind('keydown',arguments.callee);
 			audio.play();
-			$pause.show();
+			$pause.css('display','inline-block');
 			$yolo.hide();
-			hotlineBlingApp.philipHueLightsOn();
+			$owl.addClass('pulsing-owl');
+			// hotlineBlingApp.philipHueLightsOn();
 			hotlineBlingApp.interval();
 		}
 	});
@@ -230,7 +234,7 @@ hotlineBlingApp.audio = function () {
 	$pause.on('click', function() {
 		audio.pause();
 		$(this).hide();
-		$play.show();
+		$play.css('display','inline-block');
 		hotlineBlingApp.philipHueLightsOff();
 		clearInterval(loop);
 	});
@@ -238,7 +242,7 @@ hotlineBlingApp.audio = function () {
 	$play.on('click', function() {
 		audio.play();
 		$(this).hide();
-		$pause.show();
+		$pause.css('display','inline-block');
 		hotlineBlingApp.philipHueLightsOn();
 		hotlineBlingApp.interval();
 	});
@@ -248,7 +252,7 @@ hotlineBlingApp.audio = function () {
 		hotlineBlingApp.completeShutDown();
 		$play.hide();
 		$pause.hide();
-		$yolo.show();
+		$yolo.css('display','inline-block');
 	});
 }
 
@@ -256,10 +260,10 @@ hotlineBlingApp.audio = function () {
 // Yolo Button
 hotlineBlingApp.yoloButton = function() {
 	$yolo.on('click', function() {
-		hotlineBlingApp.philipHueLightsOn();
+		$owl.addClass('pulsing-owl');
 		hotlineBlingApp.interval();
 		$(this).hide();
-		$off.show();
+		$off.css('display','inline-block');
 	});
 }
 
@@ -286,6 +290,8 @@ hotlineBlingApp.completeShutDown = function() {
 	$button.mouseleave(function() {
 		$(this).css('color','#a39161');
 	});
+	$owl.removeClass('pulsing-owl');
+	$owl.appendTo('#photoID');
 }
 
 
