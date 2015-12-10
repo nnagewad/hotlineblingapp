@@ -2,6 +2,7 @@ var hotlineBlingApp = {};
 var $photoID = $('#photoID');
 var $philipsHue = $('.philips-hue');
 var $colors = $('#colors');
+var $body = $('body');
 var $button = $('button');
 var $pause = $('.pause');
 var $play = $('.play');
@@ -198,9 +199,9 @@ hotlineBlingApp.grabImageAndColor = function() {
 
 
 hotlineBlingApp.interval = function() {
-	hotlineBlingApp.philipHueLightsOn();
 	loop = setInterval(function() {
-		console.log(loop);
+		$body.addClass('lights-on');
+		$button.addClass('lights-on-button');
 		$photoID.empty();
 		hotlineBlingApp.grabImageAndColor();
 	}, 5000);
@@ -220,6 +221,9 @@ hotlineBlingApp.audio = function () {
 			$(document).unbind('keydown',arguments.callee);
 			audio.play();
 			$pause.show();
+			$yolo.hide();
+			hotlineBlingApp.philipHueLightsOn();
+			hotlineBlingApp.interval();
 		}
 	});
 	// To pause the audio
@@ -227,12 +231,24 @@ hotlineBlingApp.audio = function () {
 		audio.pause();
 		$(this).hide();
 		$play.show();
+		hotlineBlingApp.philipHueLightsOff();
+		clearInterval(loop);
 	});
 	// To play the audio after being paused
 	$play.on('click', function() {
 		audio.play();
 		$(this).hide();
 		$pause.show();
+		hotlineBlingApp.philipHueLightsOn();
+		hotlineBlingApp.interval();
+	});
+
+	// When the song ends stop getting images from instagram.  Turn off the lights, hide music playback buttons, show yolo button and return to regular color scheme.
+	$(audio).bind("ended", function(){
+		hotlineBlingApp.completeShutDown();
+		$play.hide();
+		$pause.hide();
+		$yolo.show();
 	});
 }
 
@@ -240,6 +256,7 @@ hotlineBlingApp.audio = function () {
 // Yolo Button
 hotlineBlingApp.yoloButton = function() {
 	$yolo.on('click', function() {
+		hotlineBlingApp.philipHueLightsOn();
 		hotlineBlingApp.interval();
 		$(this).hide();
 		$off.show();
@@ -250,10 +267,24 @@ hotlineBlingApp.yoloButton = function() {
 // Off button
 hotlineBlingApp.offButton = function() {
 	$off.on('click', function() {
-		clearInterval(loop);
-		hotlineBlingApp.philipHueLightsOff();
 		$(this).hide();
 		$yolo.show();
+		hotlineBlingApp.completeShutDown();
+	});
+}
+
+hotlineBlingApp.completeShutDown = function() {
+	clearInterval(loop);
+	$photoID.empty();
+	hotlineBlingApp.philipHueLightsOff();
+	$colors.css('background','black');
+	$body.removeClass('lights-on');
+	$button.removeClass('lights-on-button');
+	$button.mouseenter(function() {
+		$(this).css('color','black');
+	});
+	$button.mouseleave(function() {
+		$(this).css('color','#a39161');
 	});
 }
 

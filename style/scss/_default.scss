@@ -11,8 +11,8 @@ html {
 
 body {
 	font-family: Roboto;
-	color: white;
-	background: #fdadc6;
+	color: #a39161;
+	background: black;
 }
 
 .main-title {
@@ -58,19 +58,33 @@ body {
 	margin: 0 10px;
 	display: inline-block;
 	background: transparent;
-	border: 8px solid white;
+	border: 8px solid #a39161;
 	border-radius: 4px;
-	color: white;
+	color: #a39161;
 	font-style: bold;
 	text-transform: uppercase;
 	@include font-size(3.6);
 	padding: 20px;
 	text-align: center;
 	&:hover {
-		background: white;
-		color: #fdadc6;
+		background: #a39161;
+		color: black;
 	}
 }
+
+
+.lights-on,
+.lights-on-button {
+	color: white;
+}
+
+.lights-on-button {
+	border-color: white;
+	&:hover {
+		background: white;
+	}
+}
+
 
 .pause,
 .play,
