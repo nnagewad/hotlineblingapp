@@ -86,13 +86,16 @@ hotlineBlingApp.RGBtoXY = function(r, g, b) {
 
 
 // Function in control of the Philips Hue Lights
-// var lightsEndpoint = 'http://192.168.2.247/api/'; //HackerYou
-var lightsEndpoint = 'http://192.168.0.39/api/'; //Test
+var lightsEndpoint = 'http://192.168.2.247/api/'; //HackerYou
+//var lightsEndpoint = 'http://192.168.0.39/api/'; //Home
 var hueId = '341f606a74cc8af9473089711f7576a';
+// This affects all the lights.
 var allLights = 'groups/1/action';
+// Individual lights - start
 var light1 = 'lights/1/state';
 var light2 = 'lights/2/state';
 var light3 = 'lights/3/state';
+// Individual lights - end
 
 
 // Obtain information on the Philips Hue Light
