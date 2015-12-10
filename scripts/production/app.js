@@ -1,5 +1,12 @@
 var hotlineBlingApp = {};
-
+var $photoID = $('#photoID');
+var $philipsHue = $('.philips-hue');
+var $colors = $('#colors');
+var $button = $('button');
+var $pause = $('.pause');
+var $play = $('.play');
+var $yolo = $('.yolo');
+var $off = $('.off');
 
 // Obtain image according to a specific tag
 hotlineBlingApp.obtainInstagram = function() {
@@ -16,8 +23,6 @@ hotlineBlingApp.obtainInstagram = function() {
 		success: function(instagram) {
 			// Console Log the return array
 			var randomPhoto = Math.floor(Math.random() * 20);
-			// console.log(randomPhoto);
-			// console.log(instagram);
 			var instagramData = instagram.data[randomPhoto];
 			var link = instagramData.link;
 			var instagramDataImages = instagramData.images;
@@ -31,7 +36,7 @@ hotlineBlingApp.obtainInstagram = function() {
 			image.src = 'http://crossorigin.me/'+lowResolution;
 			image.id = "photo";
 			// Append image onto page in order to convert to canvas
-			$('#photoID').append(image);
+			$photoID.append(image);
 		},
 		error: function(data) {
 			console.log(data);
@@ -71,7 +76,7 @@ hotlineBlingApp.RGBtoXY = function(r, g, b) {
 	else {
 		xFinal = X / (X + Y + Z);
 		yFinal = Y / (X + Y + Z);
-		console.log('x=' + xFinal, 'y=' + yFinal);
+		// console.log('x=' + xFinal, 'y=' + yFinal);
 		return ('x=' + xFinal, 'y=' + yFinal);
 	}
 };
@@ -86,6 +91,8 @@ var light1 = 'lights/1/state';
 var light2 = 'lights/2/state';
 var light3 = 'lights/3/state';
 
+
+// Obtain information on the Philips Hue Light
 hotlineBlingApp.philipHueLightsInfo = function() {
 	$.ajax({
 		url: lightsEndpoint+hueId+'/config',
@@ -95,7 +102,7 @@ hotlineBlingApp.philipHueLightsInfo = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			$('.instagram').show();
+			$philipsHue.show();
 		}
 	});
 }
@@ -110,10 +117,10 @@ hotlineBlingApp.philipHueLightsOn = function() {
 		dataType: 'json',
 		data: JSON.stringify(lightsOn),
 		success: function(data) {
-			console.log(data);
+			console.log('Lights Successfully On');
 		},
 		error: function(data) {
-			$('.philips-hue').show();
+			$philipsHue.show();
 		}
 	});
 }
@@ -128,10 +135,10 @@ hotlineBlingApp.philipHueLightsOff = function() {
 		dataType: 'json',
 		data: JSON.stringify(lightsOff),
 		success: function(data) {
-			console.log(data);
+			console.log('Lights are Successfully Off');
 		},
 		error: function(data) {
-			$('.philips-hue').show();
+			$philipsHue.show();
 		}
 	});
 }
@@ -149,7 +156,7 @@ hotlineBlingApp.philipHueLightsColor = function() {
 			console.log(data);
 		},
 		error: function(data) {
-			$('.philips-hue').show();
+			$philipsHue.show();
 		}
 	});
 }
@@ -164,10 +171,15 @@ hotlineBlingApp.obtainDominantColor = function() {
 	var r = colors[0];
 	var g = colors[1];
 	var b = colors[2];
-	// console.log('r: '+r);
-	// console.log('g: '+g);
-	// console.log('b: '+b);
-	$('#colors').css('background', rgbColor);
+	// Color of font changes based on background color
+	$button.mouseenter(function() {
+		$(this).css('color',rgbColor);
+	});
+	// Color of font reverts back to white on mouse leave.
+	$button.mouseleave(function() {
+		$(this).css('color','white');
+	});
+	$colors.css('background', rgbColor);
 	hotlineBlingApp.RGBtoXY(r, g, b);
 	hotlineBlingApp.philipHueLightsColor();
 }
@@ -175,7 +187,7 @@ hotlineBlingApp.obtainDominantColor = function() {
 
 // Grab the image from the Unsplash Api and find its main colors
 hotlineBlingApp.grabImageAndColor = function() {
-	$('#photoID').empty();
+	$photoID.empty();
 	// Obtain the image and run colour theif after one second of obtaining image
 	hotlineBlingApp.obtainInstagram();
 	setTimeout(function(){
@@ -186,13 +198,13 @@ hotlineBlingApp.grabImageAndColor = function() {
 
 // Loop through to obtain images and it's color value automatically
 hotlineBlingApp.loop = function() {
-	var loop = 1000;
+	var loop = 5;
 	var lightDuration = 5000;
 	hotlineBlingApp.philipHueLightsOn();
 	for (i=0; i < loop; i++) {
 		(function(ind) {
 			setTimeout(function(){
-				$('#photoID').empty();
+				$photoID.empty();
 				hotlineBlingApp.grabImageAndColor();
 			}, 500 + (lightDuration * ind));
 		})(i);
@@ -212,40 +224,40 @@ hotlineBlingApp.audio = function () {
 		if ( kkeys.toString().indexOf( drake ) >= 0 ) {
 			$(document).unbind('keydown',arguments.callee);
 			audio.play();
-			$('.pause').show();
+			$pause.show();
 		}
 	});
 	// To pause the audio
-	$('.pause').on('click', function() {
+	$pause.on('click', function() {
 		audio.pause();
 		$(this).hide();
-		$('.play').show();
+		$play.show();
 	});
 	// To play the audio after being paused
-	$('.play').on('click', function() {
+	$play.on('click', function() {
 		audio.play();
 		$(this).hide();
-		$('.pause').show();
+		$pause.show();
 	});
 }
 
 
 // Yolo Button
 hotlineBlingApp.yoloButton = function() {
-	$('.yolo').on('click', function() {
+	$yolo.on('click', function() {
 		hotlineBlingApp.loop();
 		$(this).hide();
-		$('.off').show();
+		$off.show();
 	});
 }
 
 
 // Off button
 hotlineBlingApp.offButton = function() {
-	$('.off').on('click', function() {
+	$off.on('click', function() {
 		hotlineBlingApp.philipHueLightsOff();
 		$(this).hide();
-		$('.yolo').show();
+		$yolo.show();
 	});
 }
 
