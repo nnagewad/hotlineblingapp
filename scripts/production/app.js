@@ -86,8 +86,7 @@ hotlineBlingApp.RGBtoXY = function(r, g, b) {
 
 
 // Function in control of the Philips Hue Lights
-var lightsEndpoint = 'http://192.168.2.247/api/'; //HackerYou
-//var lightsEndpoint = 'http://192.168.0.39/api/'; //Home
+var ipAddress;
 var hueId = '341f606a74cc8af9473089711f7576a';
 // This affects all the lights.
 var allLights = 'groups/1/action';
@@ -98,10 +97,27 @@ var light3 = 'lights/3/state';
 // Individual lights - end
 
 
+// Find the IP to the Philips Hue Bridge
+hotlineBlingApp.getIPAddress = function() {
+	$.ajax({
+		url: 'https://www.meethue.com/api/nupnp',
+		dataType: 'json',
+		type: 'get',
+		success: function(hueBridge) {
+			ipAddress = hueBridge[0].internalipaddress;
+			return ipAddress;
+		},
+		error: function() {
+			$philipsHue.show();
+		}
+	});
+};
+
+
 // Obtain information on the Philips Hue Light
 hotlineBlingApp.philipHueLightsInfo = function() {
 	$.ajax({
-		url: lightsEndpoint+hueId+'/config',
+		url: 'http://'+ipAddress+'/api/'+hueId+'/config',
 		type: 'get',
 		dataType: 'json',
 		success: function(data) {
@@ -118,13 +134,10 @@ hotlineBlingApp.philipHueLightsInfo = function() {
 hotlineBlingApp.philipHueLightsOn = function() {
 	var lightsOn = {"on": true };
 	$.ajax({
-		url: lightsEndpoint+hueId+'/'+allLights,
+		url: 'http://'+ipAddress+'/api/'+hueId+'/'+allLights,
 		type: 'put',
 		dataType: 'json',
 		data: JSON.stringify(lightsOn),
-		success: function(data) {
-			console.log('Lights Successfully On');
-		},
 		error: function(data) {
 			$philipsHue.show();
 		}
@@ -136,13 +149,10 @@ hotlineBlingApp.philipHueLightsOn = function() {
 hotlineBlingApp.philipHueLightsOff = function() {
 	var lightsOff = {"on": false };
 	$.ajax({
-		url: lightsEndpoint+hueId+'/'+allLights,
+		url: 'http://'+ipAddress+'/api/'+hueId+'/'+allLights,
 		type: 'put',
 		dataType: 'json',
 		data: JSON.stringify(lightsOff),
-		success: function(data) {
-			console.log('Lights are Successfully Off');
-		},
 		error: function(data) {
 			$philipsHue.show();
 		}
@@ -152,15 +162,12 @@ hotlineBlingApp.philipHueLightsOff = function() {
 
 //Function to emit color to the bulb
 hotlineBlingApp.philipHueLightsColor = function() {
-	var colorTest = {"xy": [xFinal,yFinal]};
+	var bulbColors = {"xy": [xFinal,yFinal]};
 	$.ajax({
-		url: lightsEndpoint+hueId+'/'+allLights,
+		url: 'http://'+ipAddress+'/api/'+hueId+'/'+allLights,
 		type: 'put',
 		dataType: 'json',
-		data: JSON.stringify(colorTest),
-		success: function(data) {
-			console.log(data);
-		},
+		data: JSON.stringify(bulbColors),
 		error: function(data) {
 			$philipsHue.show();
 		}
@@ -229,7 +236,6 @@ hotlineBlingApp.audio = function () {
 			$pause.css('display','inline-block');
 			$yolo.hide();
 			$owl.addClass('pulsing-owl');
-			// hotlineBlingApp.philipHueLightsOn();
 			hotlineBlingApp.interval();
 		}
 	});
@@ -299,6 +305,7 @@ hotlineBlingApp.completeShutDown = function() {
 
 
 hotlineBlingApp.init = function() {
+	hotlineBlingApp.getIPAddress();
 	hotlineBlingApp.audio();
 	hotlineBlingApp.yoloButton();
 	hotlineBlingApp.offButton();
